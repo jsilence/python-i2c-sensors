@@ -1,0 +1,28 @@
+---
+- hosts: all
+  sudo: True
+
+# setting for a Beaglebone Black
+  user: debian
+  remote_user: debian
+
+  vars:
+# connect your BBB as described here: http://beagleboard.org/getting-started
+    platform: beaglebone-black
+    server_name: 192.168.7.2
+    install_path: /opt/sensors
+
+  tasks:
+
+    - name: install a couple of required packages
+      apt: pkg={{item}} state=latest update_cache=yes
+      with_items:
+        - git
+        - python-smbus
+
+    - name: install sensors from github
+      git: repo=git://github.com/jsilence/sensors.git
+           accept_hostkey=yes
+           dest={{ install_path }}
+
+  handlers:
